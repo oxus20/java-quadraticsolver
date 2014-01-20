@@ -16,10 +16,14 @@ public class QuadraticSolver {
 
 	/**
 	 * 
-	 * @param a constant value for a
-	 * @param b constant value for b
-	 * @param c constant value for c
-	 * @return the quadratic equation for given constant values (4.0x² + 6.0x + 2.0 = 0)
+	 * @param a
+	 *            constant value for a
+	 * @param b
+	 *            constant value for b
+	 * @param c
+	 *            constant value for c
+	 * @return the quadratic equation for given constant values (4.0x² + 6.0x +
+	 *         2.0 = 0)
 	 */
 	public static String getEuqation(double a, double b, double c) {
 		return a + "x\u00b2 " + ((b > 0) ? "+ " : "- ") + Math.abs(b) + "x "
@@ -28,11 +32,14 @@ public class QuadraticSolver {
 
 	/**
 	 * 
-	 * @param a constant value for a
-	 * @param b constant value for b
-	 * @param c constant value for c
-	 * @return discriminant of quadratic equation by using following formula 
-     * discriminant = (b * b - 4 * a * c)
+	 * @param a
+	 *            constant value for a
+	 * @param b
+	 *            constant value for b
+	 * @param c
+	 *            constant value for c
+	 * @return discriminant of quadratic equation by using following formula
+	 *         discriminant = (b * b - 4 * a * c)
 	 */
 	public static double getDelta(double a, double b, double c) {
 		return Math.pow(b, 2.0) - (4.0 * a * c);
@@ -44,49 +51,48 @@ public class QuadraticSolver {
 	 * @param b
 	 * @param c
 	 * @return quadratic equation roots considering almost all cases for example
-	 * Case 1: if discriminant < 0
-	 * Case 2: if a = 0
-	 * Case 3: if b = 0
-	 * Case 4: if a = 0 AND b == 0
+	 *         Case 1: if discriminant < 0 
+	 *         Case 2: if a = 0 
+	 *         Case 3: if b = 0
+	 *         Case 4: if a = 0 AND b == 0
 	 */
-	public static String getSolution(double a, double b, double c) {
-		String output = "";
-		double delta, squreRoot, root1, root2;
+	public static double[] getSolution(double a, double b, double c)
+			throws ArithmeticException {
+		double root1 = 0;
+		double root2 = 0;
+		double delta = getDelta(a, b, c);
 		DecimalFormat df = new DecimalFormat("#.##");
 
-		if (a == 0) {
-			if (b != 0) {
-				root1 = root2 = (-1.0 * c / b);
-				output = "x1 = " + root1 + "\nx2 = " + root2;
-			} else if (c == 0) {
-				output = "x1 = 0\nx2 = 0";
+		if (a == 0 && b != 0) {
+			root1 = root2 = (-1.0 * c / b);
+			if (c == 0) {
+				root1 = root2 = 0;
 			} else {
-				output = "No Possible Solution!";
+				throw new ArithmeticException(
+						"\nNo possible solution for the following equation:\n"
+								+ getEuqation(a, b, c));
 			}
-		} else if (b != 0) {
-			delta = QuadraticSolver.getDelta(a, b, c);
+		} else if (a != 0 && b != 0) {
+			double squareRoot = Math.sqrt(getDelta(a, b, c));
 			if (delta >= 0) {
-				squreRoot = Math.sqrt(delta);
-				root1 = (-1.0 * b + squreRoot) / (2.0 * a);
-				root2 = (-1.0 * b - squreRoot) / (2.0 * a);
-				output = "x1 = " + df.format(root1) + "\nx2 = "
-						+ df.format(root2);
+				root1 = (-1.0 * b + squareRoot) / (2.0 * a);
+				root1 = Double.parseDouble(df.format(root1));
+				root2 = (-1.0 * b - squareRoot) / (2.0 * a);
+				root2 = Double.parseDouble(df.format(root2));
 			} else {
-				output = "x1 = " + (-1.0 * b / (2.0 * a)) + " + "
-						+ df.format((Math.sqrt(Math.abs(delta)) / (2.0 * a)))
-						+ "i";
-				output += "\nx2 = " + (-1.0 * b / (2.0 * a)) + " - "
-						+ df.format((Math.sqrt(Math.abs(delta)) / (2.0 * a)))
-						+ "i";
+				throw new ArithmeticException(
+						"\nDiscriminant = " + delta + "\nTherefore, no real solution for the following equation:\n"
+								+ getEuqation(a, b, c));
 			}
 		} else {
-			if (a >= 0) {
-				output = "No Real Solution!";
+			if (a == 0) {
+				throw new ArithmeticException(
+						"\nDiscriminant = " + delta + "\nTherefore, no real solution for the following equation:\n"
+								+ getEuqation(a, b, c));
 			} else {
 				root1 = root2 = Math.sqrt(-1.0 * c / a);
-				output = "x1 = " + root1 + "\nx2 = " + root2;
 			}
 		}
-		return output;
+		return new double[] { root1, root2 };
 	}
 }
